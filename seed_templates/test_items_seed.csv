@@ -1,0 +1,17 @@
+test_code,test_name,default_level,default_risk_level,description,sort_order,is_active
+PARAM_SAVE,参数保存,REQUIRED,HIGH,验证参数保存是否生效，重启后是否保持,1,1
+POWER_LOSS_RECOVERY,掉电恢复,REQUIRED,HIGH,验证异常掉电后恢复情况,2,1
+DEFAULT_RESTORE,恢复默认值,REQUIRED,MEDIUM,验证恢复默认配置是否正确,3,1
+UPGRADE_NORMAL,正常升级,REQUIRED,HIGH,验证正常升级流程,4,1
+UPGRADE_INTERRUPT_RECOVERY,升级中断恢复,REQUIRED,HIGH,验证升级中断后系统恢复能力,5,1
+ROLLBACK_VERIFY,回滚验证,REQUIRED,HIGH,验证回滚逻辑是否正常,6,1
+COMM_ABNORMAL_FRAME,异常报文,RECOMMENDED,MEDIUM,验证异常报文处理,7,1
+LONG_RUN,长稳运行,RECOMMENDED,MEDIUM,验证长时间运行稳定性,8,1
+BOOT_NORMAL,正常启动,REQUIRED,HIGH,验证冷启动和热启动流程,9,1
+BOOT_ABNORMAL,异常启动,REQUIRED,HIGH,验证异常条件下启动行为,10,1
+PROTECT_TRIGGER,保护触发,REQUIRED,HIGH,验证各类保护触发条件和动作,11,1
+PROTECT_RECOVERY,保护恢复,REQUIRED,HIGH,验证保护恢复条件和逻辑,12,1
+COMM_NORMAL_FRAME,正常通信,REQUIRED,MEDIUM,验证正常报文收发,13,1
+STATE_TRANSITION,状态切换,REQUIRED,HIGH,验证各状态间切换是否正确,14,1
+WATCHDOG_RESET,看门狗复位,REQUIRED,HIGH,验证看门狗超时复位功能,15,1
+DIAG_CODE,故障码检查,RECOMMENDED,MEDIUM,验证故障码生成和清除,16,1

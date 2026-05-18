@@ -1,0 +1,7 @@
+username,password,real_name,email,role,status
+admin,Admin@123,管理员,admin@example.com,ADMIN,1
+dev1,Dev@123,开发一,dev1@example.com,DEVELOPER,1
+dev2,Dev@123,开发二,dev2@example.com,DEVELOPER,1
+review1,Review@123,评审一,review1@example.com,REVIEWER,1
+review2,Review@123,评审二,review2@example.com,REVIEWER,1
+tester1,Test@123,测试一,tester1@example.com,TESTER,1

@@ -1,0 +1,9 @@
+module_code,module_name,risk_level,description,sort_order,is_active
+BOOT,Bootloader/启动链,HIGH,涉及上电启动和镜像校验,1,1
+UPGRADE,升级流程,HIGH,涉及固件升级和回滚,2,1
+PARAM,参数存储,HIGH,涉及参数保存和恢复,3,1
+PROTECT,保护逻辑,HIGH,涉及保护触发和恢复,4,1
+COMM,通讯协议,MEDIUM,涉及报文收发和兼容性,5,1
+STATE,状态机/调度/看门狗,HIGH,涉及流程切换和超时恢复,6,1
+UI,UI/显示,LOW,涉及显示和界面逻辑,7,1
+DIAG,诊断功能,MEDIUM,涉及故障诊断和上报,8,1
