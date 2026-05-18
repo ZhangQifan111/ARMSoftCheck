@@ -20,6 +20,11 @@
           <span>自检单</span>
         </el-menu-item>
 
+        <el-menu-item index="/guide">
+          <el-icon><Reading /></el-icon>
+          <span>使用手册</span>
+        </el-menu-item>
+
         <!-- 管理员菜单 -->
         <el-sub-menu v-if="auth.isAdmin" index="admin">
           <template #title>

@@ -73,6 +73,12 @@ const router = createRouter({
           component: () => import("@/views/logs/Logs.vue"),
           meta: { admin: true },
         },
+        {
+          path: "guide",
+          name: "Guide",
+          component: () => import("@/views/Guide.vue"),
+          meta: { requiresAuth: true },
+        },
       ],
     },
   ],
