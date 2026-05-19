@@ -328,12 +328,20 @@ async function saveDraft() {
 
   saving.value = true
   try {
+    const currentId = Number(route.params.id)
+    currentChecklistId.value = currentId
     if (isEdit.value) {
-      await checklistApi.update(Number(route.params.id), form)
-      // 更新模块和测试项
+      await checklistApi.update(currentId, form)
       if (selectedModuleIds.value.length > 0) {
-        await checklistApi.selectModules(Number(route.params.id), selectedModuleIds.value)
-        await updateTestResults()
+        await checklistApi.selectModules(currentId, selectedModuleIds.value)
+        const data = await checklistApi.get(currentId)
+        const loaded = data.test_results.map((tr: any) => ({
+          id: tr.id, test_item_id: tr.test_item_id, test_name: tr.test_item.test_name,
+          source_modules: tr.source_modules, test_level: tr.test_level,
+          is_required: tr.is_required, executed: tr.executed, result: tr.result, remark: tr.remark || "",
+        }))
+        testResults.value = loaded
+        await updateTestResultsWithResults(currentId, loaded)
       }
     } else {
       const created = await checklistApi.create(form)
