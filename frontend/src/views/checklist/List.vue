@@ -78,27 +78,29 @@
             {{ formatDate(row.created_at) }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="120" fixed="right">
+        <el-table-column label="操作" width="150" fixed="right">
           <template #default="{ row }">
-            <el-button type="primary" link size="small" @click="router.push(`/checklists/${row.id}`)">
-              查看
-            </el-button>
-            <el-button
-              v-if="canEdit(row)"
-              type="primary" link size="small"
-              @click="router.push(`/checklists/${row.id}/edit`)"
-            >
-              编辑
-            </el-button>
-            <el-popconfirm
-              v-if="row.status === 'DRAFT' || row.status === 'RETURNED'"
-              title="确认删除该自检单？"
-              @confirm="handleDelete(row.id)"
-            >
-              <template #reference>
-                <el-button type="danger" link size="small">删除</el-button>
-              </template>
-            </el-popconfirm>
+            <div class="action-btns">
+              <el-button type="primary" link size="small" @click="router.push(`/checklists/${row.id}`)">
+                查看
+              </el-button>
+              <el-button
+                v-if="canEdit(row)"
+                type="primary" link size="small"
+                @click="router.push(`/checklists/${row.id}/edit`)"
+              >
+                编辑
+              </el-button>
+              <el-popconfirm
+                v-if="row.status === 'DRAFT' || row.status === 'RETURNED'"
+                title="确认删除该自检单？"
+                @confirm="handleDelete(row.id)"
+              >
+                <template #reference>
+                  <el-button type="danger" link size="small">删除</el-button>
+                </template>
+              </el-popconfirm>
+            </div>
           </template>
         </el-table-column>
       </el-table>
