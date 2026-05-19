@@ -111,7 +111,7 @@ def import_test_items(session):
     if not rows:
         return
     for row in rows:
-        existing = session.query(TestItem).filter_by(test_code=row["test_code"]).first()
+        existing = session.query(TestItem).filter_by(test_name=row["test_name"]).first()
         if existing:
             # 已有记录，更新 module_id / is_required
             module_code = row.get("module_code", "")
@@ -124,10 +124,9 @@ def import_test_items(session):
         module_code = row.get("module_code", "")
         module = session.query(RiskModule).filter_by(module_code=module_code).first()
         if not module:
-            logger.warning(f"模块 {module_code} 不存在，跳过测试项 {row['test_code']}")
+            logger.warning(f"模块 {module_code} 不存在，跳过测试项 {row['test_name']}")
             continue
         item = TestItem(
-            test_code=row["test_code"],
             test_name=row["test_name"],
             module_id=module.id,
             default_risk_level=RiskLevel(row.get("default_risk_level", "MEDIUM")),
@@ -135,7 +134,7 @@ def import_test_items(session):
             description=row.get("description", ""),
         )
         session.add(item)
-        logger.info(f"导入测试项: {item.test_code} -> {module_code}")
+        logger.info(f"导入测试项 {module_code}")
     session.commit()
 
 
@@ -146,7 +145,6 @@ def import_module_test_maps(session):
     for row in rows:
         existing = session.query(ModuleTestMap).filter_by(
             module_code=row["module_code"],
-            test_code=row["test_code"],
         ).first()
         if existing:
                 if k in row:
@@ -157,13 +155,12 @@ def import_module_test_maps(session):
             continue
         mp = ModuleTestMap(
             module_code=row["module_code"],
-            test_code=row["test_code"],
             is_required=bool(int(row.get("is_required", 0))),
             remark=row.get("remark", ""),
             is_active=bool(int(row.get("is_active", 1))),
         )
         session.add(mp)
-        logger.info(f"导入映射: {mp.module_code} -> {mp.test_code}")
+        logger.info(f"导入映射 {mp.module_code}")
     session.commit()
 
 

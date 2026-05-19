@@ -6,7 +6,7 @@ from typing import List, Tuple
 
 from app.models.models import (
     Checklist, ChecklistSequence, ChecklistModule, ChecklistTestResult,
-    RiskModule, TestItem, ModuleTestMap, ChecklistStatus, RiskLevel, TestLevel,
+    RiskModule, TestItem, ChecklistStatus, RiskLevel, TestLevel,
     ChangeType, User, Project
 )
 from app.services.log_service import write_log
@@ -65,8 +65,7 @@ async def get_test_items_for_modules(
     return [
         {
             "test_item_id": item.id,
-            "test_code": item.test_code,
-            "test_name": item.test_name,
+                "test_name": item.test_name,
             "default_risk_level": item.default_risk_level,
             "description": item.description,
             "is_required": item.is_required,

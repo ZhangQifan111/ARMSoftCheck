@@ -108,8 +108,7 @@ class TestItem(Base):
     __tablename__ = "test_items"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    test_code = Column(String(50), unique=True, nullable=False, index=True)
-    test_name = Column(String(200), nullable=False)
+    test_name = Column(String(200), unique=True, nullable=False)
     module_id = Column(Integer, ForeignKey("risk_modules.id"), nullable=False, index=True)
     default_risk_level = Column(Enum(RiskLevel), default=RiskLevel.MEDIUM, nullable=False)
     is_required = Column(Boolean, default=False, nullable=False)
@@ -122,22 +121,18 @@ class TestItem(Base):
 
 
 # ─── 模块-测试项映射表 ─────────────────────────────────────
-class ModuleTestMap(Base):
-    __tablename__ = "module_test_maps"
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    module_code = Column(String(50), ForeignKey("risk_modules.module_code"), nullable=False, index=True)
-    test_code = Column(String(50), ForeignKey("test_items.test_code"), nullable=False, index=True)
-    is_required = Column(Boolean, default=False, nullable=False)
-
-    remark = Column(String(255), nullable=True)
-    is_active = Column(Boolean, default=True, nullable=False)
-    created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
-
-    __table_args__ = (
-        Index("ix_module_test_unique", "module_code", "test_code", unique=True),
-    )
+# 废弃：2026-05-19 删除，模块-测试关系已改为 TestItem.module_id 直接关联
+# class ModuleTestMap(Base):
+#     __tablename__ = "module_test_maps"
+#     id = Column(Integer, primary_key=True, autoincrement=True)
+#     module_code = Column(String(50), ForeignKey("risk_modules.module_code"), nullable=False, index=True)
+#     test_code = Column(String(50), ForeignKey("test_items.test_code"), nullable=False, index=True)
+#     is_required = Column(Boolean, default=False, nullable=False)
+#     remark = Column(String(255), nullable=True)
+#     is_active = Column(Boolean, default=True, nullable=False)
+#     created_at = Column(DateTime, server_default=func.now())
+#     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+#     __table_args__ = (Index("ix_module_test_unique", "module_code", "test_code", unique=True),)
 
 
 # ─── 编号序列表 ────────────────────────────────────────────

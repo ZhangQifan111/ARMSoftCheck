@@ -8,7 +8,6 @@
     </div>
     <el-table :data="list" stripe v-loading="loading" row-key="id">
       <el-table-column prop="id" label="ID" width="60" />
-      <el-table-column prop="test_code" label="代码" width="180" />
       <el-table-column prop="test_name" label="名称" min-width="200" />
       <el-table-column prop="module_id" label="所属模块" width="140">
         <template #default="{ row }">
@@ -43,9 +42,6 @@
           <el-select v-model="form.module_id" :disabled="!!editing" style="width:100%" placeholder="请选择模块">
             <el-option v-for="m in modules" :key="m.id" :label="m.module_name" :value="m.id" />
           </el-select>
-        </el-form-item>
-        <el-form-item label="测试项代码" prop="test_code">
-          <el-input v-model="form.test_code" :disabled="!!editing" />
         </el-form-item>
         <el-form-item label="测试项名称" prop="test_name">
           <el-input v-model="form.test_name" />
@@ -85,11 +81,10 @@ const editing = ref<TestItem | null>(null)
 const saving = ref(false)
 const formRef = ref()
 
-function formDefault() { return { module_id: null as number | null, test_code: "", test_name: "", default_risk_level: "MEDIUM", is_required: false, description: "" } }
+function formDefault() { return { module_id: null as number | null, test_name: "", default_risk_level: "MEDIUM", is_required: false, description: "" } }
 const form = reactive(formDefault())
 const rules = {
   module_id: [{ required: true, message: "必选模块", trigger: "change" }],
-  test_code: [{ required: true, message: "必填", trigger: "blur" }],
   test_name: [{ required: true, message: "必填", trigger: "blur" }],
 }
 

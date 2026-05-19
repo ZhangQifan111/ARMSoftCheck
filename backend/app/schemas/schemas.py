@@ -101,7 +101,6 @@ class RiskModuleOut(BaseModel):
 
 # ─── 测试项 ───────────────────────────────────────────────
 class TestItemCreate(BaseModel):
-    test_code: str = Field(..., max_length=50)
     test_name: str = Field(..., max_length=200)
     module_id: int
     default_risk_level: RiskLevel = RiskLevel.MEDIUM
@@ -119,7 +118,6 @@ class TestItemUpdate(BaseModel):
 
 class TestItemOut(BaseModel):
     id: int
-    test_code: str
     test_name: str
     module_id: int
     default_risk_level: RiskLevel
@@ -135,7 +133,6 @@ class TestItemOut(BaseModel):
 # 以下 Schema 已废弃（保留用于兼容），映射表已停用，测试项直接归属模块
 class ModuleTestMapCreate(BaseModel):
     module_code: str
-    test_code: str
     is_required: bool = False
     remark: Optional[str] = None
     is_active: bool = True
@@ -150,7 +147,6 @@ class ModuleTestMapUpdate(BaseModel):
 class ModuleTestMapOut(BaseModel):
     id: int
     module_code: str
-    test_code: str
     is_required: bool
     remark: Optional[str]
     is_active: bool
@@ -223,7 +219,6 @@ class GenerateTestItemsRequest(BaseModel):
 
 class GenerateTestItemOut(BaseModel):
     test_item_id: int
-    test_code: str
     test_name: str
     module_id: int
     module_name: str

@@ -22,9 +22,7 @@ async def list_test_items(
 ):
     query = select(TestItem)
     if keyword:
-        query = query.where(
-            (TestItem.test_code.contains(keyword)) | (TestItem.test_name.contains(keyword))
-        )
+        query = query.where(TestItem.test_name.contains(keyword))
     if module_id is not None:
         query = query.where(TestItem.module_id == module_id)
 
@@ -41,12 +39,6 @@ async def create_test_item(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_admin),
 ):
-    existing = await db.execute(
-        select(TestItem).where(TestItem.test_code == body.test_code)
-    )
-    if existing.scalar_one_or_none():
-        raise HTTPException(status_code=400, detail="测试项代码已存在")
-
     item = TestItem(**body.model_dump())
     db.add(item)
     await db.commit()
@@ -55,7 +47,7 @@ async def create_test_item(
     await write_log(
         db, current_user.id, current_user.real_name,
         "TEST_ITEM", "CREATE", business_id=item.id,
-        detail=f"创建测试项 {item.test_code}({item.test_name})"
+        detail=f"创建测试项 {item.test_name}"
     )
 
     return TestItemOut.model_validate(item)
@@ -82,7 +74,7 @@ async def update_test_item(
     await write_log(
         db, current_user.id, current_user.real_name,
         "TEST_ITEM", "UPDATE", business_id=item_id,
-        detail=f"更新测试项 {item.test_code}"
+        detail=f"更新测试项 {item.test_name}"
     )
 
     return TestItemOut.model_validate(item)
@@ -105,7 +97,7 @@ async def delete_test_item(
     await write_log(
         db, current_user.id, current_user.real_name,
         "TEST_ITEM", "DELETE", business_id=item_id,
-        detail=f"删除测试项 {item.test_code}"
+        detail=f"删除测试项 {item.test_name}"
     )
 
     return {"code": 0, "message": "删除成功"}

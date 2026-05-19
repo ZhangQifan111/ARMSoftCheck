@@ -292,7 +292,6 @@ async def generate_test_items_api(
         src = item["source_modules"][0]
         result.append(GenerateTestItemOut(
             test_item_id=item["test_item_id"],
-            test_code=item["test_code"],
             test_name=item["test_name"],
             module_id=src["module_id"],
             module_name=src["module_name"],

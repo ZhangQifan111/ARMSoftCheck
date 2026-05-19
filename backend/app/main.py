@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 import logging
 
 from app.core.database import engine, Base
-from app.api.routers import auth, users, projects, risk_modules, test_items, module_test_maps, checklists, operation_logs
+from app.api.routers import auth, users, projects, risk_modules, test_items, checklists, operation_logs
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -51,7 +51,7 @@ app.include_router(users.router, prefix="/api/v1")
 app.include_router(projects.router, prefix="/api/v1")
 app.include_router(risk_modules.router, prefix="/api/v1")
 app.include_router(test_items.router, prefix="/api/v1")
-app.include_router(module_test_maps.router, prefix="/api/v1")
+
 app.include_router(checklists.router, prefix="/api/v1")
 app.include_router(operation_logs.router, prefix="/api/v1")
 

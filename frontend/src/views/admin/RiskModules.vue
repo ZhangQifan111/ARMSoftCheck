@@ -30,7 +30,6 @@
                 style="width:100%"
                 header-cell-class-name="test-item-header"
               >
-                <el-table-column prop="test_code" label="编码" width="140" />
                 <el-table-column prop="test_name" label="测试名称" min-width="200" show-overflow-tooltip />
                 <el-table-column prop="is_required" label="必做" width="80">
                   <template #default="{ row: ti }">
@@ -148,9 +147,6 @@
             该模块下暂无未分配的测试项，可先去「测试项管理」添加
           </div>
         </el-form-item>
-        <el-form-item label="测试编码" prop="test_code">
-          <el-input v-model="testItemForm.test_code" placeholder="选择名称后自动填入，也可手动修改" />
-        </el-form-item>
         <el-form-item label="必做">
           <el-switch v-model="testItemForm.is_required" />
         </el-form-item>
@@ -250,13 +246,12 @@ const testItemFormRef = ref()
 const allTestItems = ref<TestItem[]>([])   // 全局测试项字典
 const testItemForm = reactive({
   module_id: null as number | null,
-  test_code: "", test_name: "", is_required: false,
+  test_name: "", is_required: false,
   default_risk_level: "MEDIUM" as "HIGH" | "MEDIUM" | "LOW",
 })
 const testItemRules = {
   module_id: [{ required: true, message: "必选", trigger: "change" }],
   test_name: [{ required: true, message: "必选", trigger: "change" }],
-  test_code: [{ required: true, message: "必填", trigger: "blur" }],
 }
 
 // 可选测试项列表：排除当前模块已有的（新增时），编辑时保留自身
@@ -270,10 +265,9 @@ const availableTestItems = computed(() => {
 
 // 选中测试名称 → 自动填入其他字段
 watch(() => testItemForm.test_name, (name) => {
-  if (!name) { testItemForm.test_code = ""; return }
+  if (!name) return
   const found = allTestItems.value.find(t => t.test_name === name)
   if (found) {
-    testItemForm.test_code = found.test_code
     testItemForm.is_required = found.is_required
     testItemForm.default_risk_level = found.default_risk_level
     testItemForm.description = found.description || ""
@@ -289,13 +283,13 @@ function openTestItemDialog(moduleId: number, item?: TestItem) {
   testItemEditing.value = item || null
   if (item) {
     Object.assign(testItemForm, {
-      module_id: item.module_id, test_code: item.test_code, test_name: item.test_name,
+      module_id: item.module_id, test_name: item.test_name,
       is_required: item.is_required,
       default_risk_level: item.default_risk_level, description: item.description || "",
     })
   } else {
     Object.assign(testItemForm, {
-      module_id: moduleId, test_code: "", test_name: "", is_required: false,
+      module_id: moduleId, test_name: "", is_required: false,
       default_risk_level: "MEDIUM",
     })
   }

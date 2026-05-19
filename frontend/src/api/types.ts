@@ -29,7 +29,6 @@ export interface RiskModule {
 
 export interface TestItem {
   id: number
-  test_code: string
   test_name: string
   module_id: number
   default_risk_level: "HIGH" | "MEDIUM" | "LOW"
@@ -41,7 +40,6 @@ export interface TestItem {
 export interface ModuleTestMap {
   id: number
   module_code: string
-  test_code: string
   is_required: boolean
   remark: string | null
   is_active: boolean
@@ -50,7 +48,6 @@ export interface ModuleTestMap {
 
 export interface GenerateTestItem {
   test_item_id: number
-  test_code: string
   test_name: string
   module_id: number
   module_name: string
