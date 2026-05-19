@@ -51,7 +51,7 @@ export const mapApi = {
   update: (id: number, data: any) => request.put(`/module-test-maps/${id}`, data),
   delete: (id: number) => request.delete(`/module-test-maps/${id}`),
   generate: (module_ids: number[]) =>
-    request.post<any, GenerateTestItem[]>("/module-test-maps/generate", { module_ids }),
+    request.post<any, GenerateTestItem[]>("/checklists/generate-test-items", { module_ids }),
 }
 
 // ─── 自检单 ────────────────────────────────────────────────
@@ -69,6 +69,8 @@ export const checklistApi = {
   review: (id: number, data: { action: string; comment: string }) =>
     request.post(`/checklists/${id}/review`, data),
   reviews: (id: number) => request.get<any, any[]>(`/checklists/${id}/reviews`),
+  generateTestItems: (module_ids: number[]) =>
+    request.post<any, GenerateTestItem[]>(`/checklists/generate-test-items`, { module_ids }),
 }
 
 // ─── 操作日志 ──────────────────────────────────────────────

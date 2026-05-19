@@ -284,20 +284,12 @@ async function loadChecklist() {
 }
 
 async function generateTestItems() {
-  if (!isEdit.value) {
-    // 新建时先生成
-    testResults.value = []
-  }
   generating.value = true
   try {
-    const items = await checklistApi.selectModules(
-      isEdit.value ? Number(route.params.id) : 0,
-      selectedModuleIds.value
-    )
-    // 重新加载
+    let items: any[] = []
     if (isEdit.value) {
-      const id = Number(route.params.id)
-      const data = await checklistApi.get(id)
+      await checklistApi.selectModules(Number(route.params.id), selectedModuleIds.value)
+      const data = await checklistApi.get(Number(route.params.id))
       testResults.value = data.test_results.map((tr: any) => ({
         id: tr.id,
         test_item_id: tr.test_item_id,
@@ -308,6 +300,19 @@ async function generateTestItems() {
         executed: tr.executed,
         result: tr.result,
         remark: tr.remark || "",
+      }))
+    } else {
+      testResults.value = []
+      items = await checklistApi.generateTestItems(selectedModuleIds.value)
+      testResults.value = items.map((item: any) => ({
+        test_item_id: item.test_item_id,
+        test_name: item.test_name,
+        source_modules: item.module_name,
+        test_level: item.test_level,
+        is_required: item.is_required,
+        executed: undefined,
+        result: undefined,
+        remark: "",
       }))
     }
     ElMessage.success("测试项已更新")
@@ -388,7 +393,7 @@ async function handleSubmit() {
 
   try {
     await ElMessageBox.confirm(
-      "确认提交自检单？提交后将生成唯一编号，无法直接编辑。",
+      "确认提交自检单？提交后将生成唯一编号。",
       "提交确认",
       { type: "warning" }
     )
@@ -398,19 +403,16 @@ async function handleSubmit() {
 
   submitting.value = true
   try {
-    // 先保存
     if (isEdit.value) {
       await checklistApi.update(Number(route.params.id), form)
       await updateTestResults()
+      await checklistApi.submit(Number(route.params.id))
     } else {
       const created = await checklistApi.create(form)
       await checklistApi.selectModules(created.id, selectedModuleIds.value)
       await updateTestResults(created.id)
-      router.replace(`/checklists/${created.id}/edit`)
+      await checklistApi.submit(created.id)
     }
-    // 提交
-    const id = isEdit.value ? Number(route.params.id) : (await checklistApi.create(form)).id
-    await checklistApi.submit(id)
     ElMessage.success("提交成功！")
     router.push(`/checklists/${id}`)
   } catch (e: any) {
