@@ -141,7 +141,14 @@ onMounted(() => {
 async function loadData() {
   loading.value = true
   try {
-    const res = await checklistApi.list(query)
+    // 过滤掉空字符串，避免 FastAPI enum 校验失败（422）
+    const params: any = {}
+    for (const [k, v] of Object.entries(query)) {
+      if (v !== "" && v !== null && v !== undefined) {
+        params[k] = v
+      }
+    }
+    const res = await checklistApi.list(params)
     list.value = res.items
     total.value = res.total
   } finally {
