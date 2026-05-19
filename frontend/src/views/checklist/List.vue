@@ -197,6 +197,12 @@ function canEdit(row: Checklist) {
   return false
 }
 
+async function handleDelete(id: number) {
+  await checklistApi.delete(id)
+  ElMessage.success("删除成功")
+  loadData()
+}
+
 function formatDate(d: string) {
   return d ? dayjs(d).format("YYYY-MM-DD HH:mm") : "-"
 }
