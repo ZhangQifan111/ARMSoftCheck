@@ -195,6 +195,7 @@ const router = useRouter()
 const auth = useAuthStore()
 
 const isEdit = computed(() => !!route.params.id)
+const currentChecklistId = ref<number | null>(null)
 const isReadonly = computed(() =>
   auth.isDeveloper && form.status !== "DRAFT" && form.status !== "RETURNED"
 )
@@ -338,8 +339,8 @@ async function saveDraft() {
       const created = await checklistApi.create(form)
       if (selectedModuleIds.value.length > 0) {
         await checklistApi.selectModules(created.id, selectedModuleIds.value)
-        await updateTestResults(created.id)
       }
+      currentChecklistId.value = created.id
       router.replace(`/checklists/${created.id}/edit`)
     }
     ElMessage.success("保存成功")
@@ -410,10 +411,11 @@ async function handleSubmit() {
 
   submitting.value = true
   try {
+    const currentId = currentChecklistId.value || Number(route.params.id)
     if (isEdit.value) {
-      await checklistApi.update(Number(route.params.id), form)
-      await updateTestResults()
-      await checklistApi.submit(Number(route.params.id))
+      await checklistApi.update(currentId, form)
+      await updateTestResults(currentId)
+      await checklistApi.submit(currentId)
     } else {
       const created = await checklistApi.create(form)
       await checklistApi.selectModules(created.id, selectedModuleIds.value)
