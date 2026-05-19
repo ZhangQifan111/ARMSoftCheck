@@ -268,11 +268,14 @@ async def delete_checklist(
     if not checklist:
         raise HTTPException(status_code=404, detail="自检单不存在")
 
-    if checklist.status != ChecklistStatus.DRAFT:
-        raise HTTPException(status_code=400, detail="只能删除草稿状态的自检单")
-
-    if current_user.role == UserRole.DEVELOPER and checklist.creator_id != current_user.id:
-        raise HTTPException(status_code=403, detail="无权删除此自检单")
+    # ADMIN 可删除任意状态，DEVELOPER 只能删自己创建的草稿
+    if current_user.role == UserRole.DEVELOPER:
+        if checklist.creator_id != current_user.id:
+            raise HTTPException(status_code=403, detail="无权删除此自检单")
+        if checklist.status != ChecklistStatus.DRAFT:
+            raise HTTPException(status_code=400, detail="只能删除草稿状态的自检单")
+    elif current_user.role not in [UserRole.ADMIN]:
+        raise HTTPException(status_code=403, detail="权限不足")
 
     no = checklist.checklist_no or checklist.title
     await db.execute(delete(Checklist).where(Checklist.id == checklist_id))
