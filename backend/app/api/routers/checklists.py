@@ -362,7 +362,7 @@ async def select_modules(
             test_item_id=item["test_item_id"],
             module_id=src["module_id"],
             is_required=item["is_required"],
-            test_level=item["default_level"],
+            test_level=TestLevel.REQUIRED if item["is_required"] else TestLevel.RECOMMENDED,
             source_modules=",".join([s["module_name"] for s in item["source_modules"]]),
         )
         db.add(tr)
