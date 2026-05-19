@@ -111,7 +111,6 @@ class TestItemCreate(BaseModel):
     is_required: bool = False
     description: Optional[str] = None
     sort_order: int = 0
-    is_active: bool = True
 
 
 class TestItemUpdate(BaseModel):
@@ -121,7 +120,6 @@ class TestItemUpdate(BaseModel):
     is_required: Optional[bool] = None
     description: Optional[str] = None
     sort_order: Optional[int] = None
-    is_active: Optional[bool] = None
 
 
 class TestItemOut(BaseModel):
@@ -133,7 +131,6 @@ class TestItemOut(BaseModel):
     is_required: bool
     description: Optional[str]
     sort_order: int
-    is_active: bool
     created_at: datetime
 
     class Config:

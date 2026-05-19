@@ -56,7 +56,6 @@ async def get_test_items_for_modules(
         .options(selectinload(TestItem.module))
         .where(
             TestItem.module_id.in_(module_ids),
-            TestItem.is_active == True,
             TestItem.module.has(RiskModule.is_active == True),
         )
         .order_by(TestItem.sort_order, TestItem.id)

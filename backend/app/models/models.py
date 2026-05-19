@@ -114,7 +114,6 @@ class TestItem(Base):
     is_required = Column(Boolean, default=False, nullable=False)
     description = Column(Text, nullable=True)
     sort_order = Column(Integer, default=0)
-    is_active = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 

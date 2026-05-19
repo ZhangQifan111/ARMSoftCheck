@@ -132,12 +132,10 @@ def import_test_items(session):
             test_code=row["test_code"],
             test_name=row["test_name"],
             module_id=module.id,
-            default_level=TestLevel(row.get("default_level", "RECOMMENDED")),
             default_risk_level=RiskLevel(row.get("default_risk_level", "MEDIUM")),
             is_required=bool(int(row.get("is_required", 0))),
             description=row.get("description", ""),
             sort_order=int(row.get("sort_order", 0)),
-            is_active=bool(int(row.get("is_active", 1))),
         )
         session.add(item)
         logger.info(f"导入测试项: {item.test_code} -> {module_code}")

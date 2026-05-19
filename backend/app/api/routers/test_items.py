@@ -17,7 +17,6 @@ async def list_test_items(
     page_size: int = Query(100, ge=1, le=500),
     keyword: Optional[str] = None,
     module_id: Optional[int] = None,
-    is_active: Optional[bool] = None,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -28,8 +27,6 @@ async def list_test_items(
         )
     if module_id is not None:
         query = query.where(TestItem.module_id == module_id)
-    if is_active is not None:
-        query = query.where(TestItem.is_active == is_active)
 
     total = (await db.execute(select(func.count()).select_from(query.subquery()))).scalar()
     query = query.order_by(TestItem.sort_order, TestItem.id).offset((page - 1) * page_size).limit(page_size)

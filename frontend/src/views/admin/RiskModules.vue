@@ -171,9 +171,6 @@
         <el-form-item label="排序号">
           <el-input-number v-model="testItemForm.sort_order" :min="0" />
         </el-form-item>
-        <el-form-item label="启用">
-          <el-switch v-model="testItemForm.is_active" />
-        </el-form-item>
       </el-form>
       <template #footer>
         <el-button @click="testItemDialogVisible=false">取消</el-button>
@@ -264,7 +261,7 @@ const testItemForm = reactive({
   module_id: null as number | null,
   test_code: "", test_name: "", is_required: false,
   default_risk_level: "MEDIUM" as "HIGH" | "MEDIUM" | "LOW",
-  description: "", sort_order: 0, is_active: true,
+  description: "", sort_order: 0,
 })
 const testItemRules = {
   module_id: [{ required: true, message: "必选", trigger: "change" }],
@@ -305,13 +302,13 @@ function openTestItemDialog(moduleId: number, item?: TestItem) {
       module_id: item.module_id, test_code: item.test_code, test_name: item.test_name,
       is_required: item.is_required,
       default_risk_level: item.default_risk_level, description: item.description || "",
-      sort_order: item.sort_order, is_active: item.is_active,
+      sort_order: item.sort_order,
     })
   } else {
     Object.assign(testItemForm, {
       module_id: moduleId, test_code: "", test_name: "", is_required: false,
       default_risk_level: "MEDIUM",
-      description: "", sort_order: 0, is_active: true,
+      description: "", sort_order: 0,
     })
   }
   loadAllTestItems()

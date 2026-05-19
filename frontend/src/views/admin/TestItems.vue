@@ -24,14 +24,7 @@
       </el-table-column>
       <el-table-column prop="description" label="描述" min-width="200" show-overflow-tooltip />
       <el-table-column prop="sort_order" label="排序" width="70" />
-      <el-table-column prop="is_active" label="状态" width="80">
-        <template #default="{ row }">
-          <el-tag :type="row.is_active ? 'success' : 'info'" size="small">
-            {{ row.is_active ? "启用" : "禁用" }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="150">
+      <el-table-column label="操作" width="120">
         <template #default="{ row }">
           <el-button type="primary" link size="small" @click="handleEdit(row)">编辑</el-button>
           <el-popconfirm title="确认删除？" @confirm="handleDelete(row.id)">
@@ -71,9 +64,6 @@
         <el-form-item label="排序号">
           <el-input-number v-model="form.sort_order" :min="0" />
         </el-form-item>
-        <el-form-item label="启用">
-          <el-switch v-model="form.is_active" />
-        </el-form-item>
       </el-form>
       <template #footer>
         <el-button @click="showDialog=false">取消</el-button>
@@ -99,7 +89,7 @@ const editing = ref<TestItem | null>(null)
 const saving = ref(false)
 const formRef = ref()
 
-function formDefault() { return { module_id: null as number | null, test_code: "", test_name: "", default_risk_level: "MEDIUM", is_required: false, description: "", sort_order: 0, is_active: true } }
+function formDefault() { return { module_id: null as number | null, test_code: "", test_name: "", default_risk_level: "MEDIUM", is_required: false, description: "", sort_order: 0 } }
 const form = reactive(formDefault())
 const rules = {
   module_id: [{ required: true, message: "必选模块", trigger: "change" }],
@@ -113,7 +103,7 @@ async function loadModules() { const r = await riskModuleApi.list({ page_size: 2
 
 function handleEdit(row: TestItem) {
   editing.value = row
-  Object.assign(form, { module_id: row.module_id, test_code: row.test_code, test_name: row.test_name, default_risk_level: row.default_risk_level, is_required: row.is_required, description: row.description || "", sort_order: row.sort_order, is_active: row.is_active })
+  Object.assign(form, { module_id: row.module_id, test_code: row.test_code, test_name: row.test_name, default_risk_level: row.default_risk_level, is_required: row.is_required, description: row.description || "", sort_order: row.sort_order })
   showDialog.value = true
 }
 
