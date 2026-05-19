@@ -12,7 +12,7 @@ from app.api.deps import get_current_user, require_admin
 from app.services.checklist_service import get_test_items_for_modules
 from app.services.log_service import write_log
 
-router = APIRouter(prefix="/module-test-maps", tags=["模块-测试项映射"])
+router = APIRouter(prefix="/module-test-maps", tags=["[已废弃] 模块-测试项映射"])
 
 
 @router.get("", response_model=PageResponse)

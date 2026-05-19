@@ -32,8 +32,10 @@ export interface TestItem {
   id: number
   test_code: string
   test_name: string
+  module_id: number
   default_level: "REQUIRED" | "RECOMMENDED"
   default_risk_level: "HIGH" | "MEDIUM" | "LOW"
+  is_required: boolean
   description: string | null
   sort_order: number
   is_active: boolean

@@ -16,6 +16,7 @@ async def list_test_items(
     page: int = Query(1, ge=1),
     page_size: int = Query(100, ge=1, le=200),
     keyword: Optional[str] = None,
+    module_id: Optional[int] = None,
     is_active: Optional[bool] = None,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
@@ -25,6 +26,8 @@ async def list_test_items(
         query = query.where(
             (TestItem.test_code.contains(keyword)) | (TestItem.test_name.contains(keyword))
         )
+    if module_id is not None:
+        query = query.where(TestItem.module_id == module_id)
     if is_active is not None:
         query = query.where(TestItem.is_active == is_active)
 

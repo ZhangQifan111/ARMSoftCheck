@@ -50,47 +50,36 @@ async def get_test_items_for_modules(
     db: AsyncSession,
     module_ids: List[int],
 ) -> List[dict]:
-    """根据选中模块查询映射的测试项，返回合并去重后的测试项列表"""
-    # 查询所有映射
+    """根据选中模块查询直接归属的测试项（简化设计：测试项直接挂在模块下，不再走映射表）"""
     result = await db.execute(
-        select(ModuleTestMap)
-        .options(selectinload(ModuleTestMap.module), selectinload(ModuleTestMap.test_item))
+        select(TestItem)
+        .options(selectinload(TestItem.module))
         .where(
-            ModuleTestMap.module_id.in_(module_ids),
-            ModuleTestMap.is_active == True,
-            ModuleTestMap.module.has(RiskModule.is_active == True),
-            ModuleTestMap.test_item.has(TestItem.is_active == True),
+            TestItem.module_id.in_(module_ids),
+            TestItem.is_active == True,
+            TestItem.module.has(RiskModule.is_active == True),
         )
-        .order_by(ModuleTestMap.sort_order)
+        .order_by(TestItem.sort_order, TestItem.id)
     )
-    maps = result.scalars().all()
+    items = result.scalars().all()
 
-    # 按 test_item_id 合并去重
-    item_map: dict[int, dict] = {}
-    for m in maps:
-        tid = m.test_item_id
-        if tid not in item_map:
-            item_map[tid] = {
-                "test_item_id": m.test_item_id,
-                "test_code": m.test_item.test_code,
-                "test_name": m.test_item.test_name,
-                "default_level": m.test_item.default_level,
-                "default_risk_level": m.test_item.default_risk_level,
-                "description": m.test_item.description,
-                "source_modules": [],
-                "is_required": m.is_required,
-            }
-        else:
-            # 任一映射标记为必做，则最终必做
-            if m.is_required:
-                item_map[tid]["is_required"] = True
-        item_map[tid]["source_modules"].append({
-            "module_id": m.module_id,
-            "module_name": m.module.module_name,
-            "module_code": m.module.module_code,
-        })
-
-    return list(item_map.values())
+    return [
+        {
+            "test_item_id": item.id,
+            "test_code": item.test_code,
+            "test_name": item.test_name,
+            "default_level": item.default_level,
+            "default_risk_level": item.default_risk_level,
+            "description": item.description,
+            "is_required": item.is_required,
+            "source_modules": [{
+                "module_id": item.module_id,
+                "module_name": item.module.module_name,
+                "module_code": item.module.module_code,
+            }],
+        }
+        for item in items
+    ]
 
 
 async def create_or_update_test_results(

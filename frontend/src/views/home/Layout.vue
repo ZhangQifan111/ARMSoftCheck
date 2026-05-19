@@ -34,7 +34,6 @@
           <el-menu-item index="/admin/projects">项目管理</el-menu-item>
           <el-menu-item index="/admin/risk-modules">风险模块</el-menu-item>
           <el-menu-item index="/admin/test-items">测试项</el-menu-item>
-          <el-menu-item index="/admin/maps">模块-测试映射</el-menu-item>
           <el-menu-item index="/admin/users">用户管理</el-menu-item>
           <el-menu-item index="/admin/logs">操作日志</el-menu-item>
         </el-sub-menu>
@@ -96,7 +95,6 @@ const pageTitle = computed(() => {
     "/admin/projects": "项目管理",
     "/admin/risk-modules": "风险模块管理",
     "/admin/test-items": "测试项管理",
-    "/admin/maps": "模块-测试映射",
     "/admin/users": "用户管理",
     "/admin/logs": "操作日志",
   }

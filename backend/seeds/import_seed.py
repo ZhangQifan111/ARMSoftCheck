@@ -115,18 +115,32 @@ def import_test_items(session):
     for row in rows:
         existing = session.query(TestItem).filter_by(test_code=row["test_code"]).first()
         if existing:
+            # 已有记录，更新 module_id / is_required
+            module_code = row.get("module_code", "")
+            if module_code:
+                mod = session.query(RiskModule).filter_by(module_code=module_code).first()
+                if mod and existing.module_id is None:
+                    existing.module_id = mod.id
+            existing.is_required = bool(int(row.get("is_required", 0)))
+            continue
+        module_code = row.get("module_code", "")
+        module = session.query(RiskModule).filter_by(module_code=module_code).first()
+        if not module:
+            logger.warning(f"模块 {module_code} 不存在，跳过测试项 {row['test_code']}")
             continue
         item = TestItem(
             test_code=row["test_code"],
             test_name=row["test_name"],
-            default_level=TestLevel(row["default_level"]),
-            default_risk_level=RiskLevel(row["default_risk_level"]),
+            module_id=module.id,
+            default_level=TestLevel(row.get("default_level", "RECOMMENDED")),
+            default_risk_level=RiskLevel(row.get("default_risk_level", "MEDIUM")),
+            is_required=bool(int(row.get("is_required", 0))),
             description=row.get("description", ""),
             sort_order=int(row.get("sort_order", 0)),
             is_active=bool(int(row.get("is_active", 1))),
         )
         session.add(item)
-        logger.info(f"导入测试项: {item.test_code}")
+        logger.info(f"导入测试项: {item.test_code} -> {module_code}")
     session.commit()
 
 
