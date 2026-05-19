@@ -85,6 +85,7 @@ const editing = ref<TestItem | null>(null)
 const saving = ref(false)
 const formRef = ref()
 
+function formDefault() { return { module_id: null as number | null, test_code: "", test_name: "", default_risk_level: "MEDIUM", is_required: false, description: "" } }
 const form = reactive(formDefault())
 const rules = {
   module_id: [{ required: true, message: "必选模块", trigger: "change" }],

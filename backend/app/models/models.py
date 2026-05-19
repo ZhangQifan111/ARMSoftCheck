@@ -96,6 +96,7 @@ class RiskModule(Base):
     module_name = Column(String(100), nullable=False)
     risk_level = Column(Enum(RiskLevel), default=RiskLevel.MEDIUM, nullable=False)
     description = Column(Text, nullable=True)
+    sort_order = Column(Integer, default=0)
 
     is_active = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime, server_default=func.now())

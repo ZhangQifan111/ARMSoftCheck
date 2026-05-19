@@ -189,7 +189,7 @@ const moduleEditing = ref<RiskModule | null>(null)
 const moduleSaving = ref(false)
 const moduleFormRef = ref()
 const moduleForm = reactive({
-  module_code: "", module_name: "", risk_level: "MEDIUM",
+  module_code: "", module_name: "", risk_level: "MEDIUM", description: "",
 })
 const moduleRules = {
   module_code: [{ required: true, message: "必填", trigger: "blur" }],
@@ -204,6 +204,7 @@ function openModuleDialog(row?: RiskModule) {
       risk_level: row.risk_level, description: row.description || "",
     })
   } else {
+    Object.assign(moduleForm, { module_code: "", module_name: "", risk_level: "MEDIUM", description: "" })
   }
   moduleDialogVisible.value = true
 }
