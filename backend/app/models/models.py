@@ -187,7 +187,7 @@ class ChecklistModule(Base):
     __tablename__ = "checklist_modules"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    checklist_id = Column(Integer, ForeignKey("checklists.id"), nullable=False)
+    checklist_id = Column(Integer, ForeignKey("checklists.id", ondelete="CASCADE"), nullable=False)
     module_id = Column(Integer, ForeignKey("risk_modules.id"), nullable=False)
     created_at = Column(DateTime, server_default=func.now())
 
@@ -200,7 +200,7 @@ class ChecklistTestResult(Base):
     __tablename__ = "checklist_test_results"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    checklist_id = Column(Integer, ForeignKey("checklists.id"), nullable=False)
+    checklist_id = Column(Integer, ForeignKey("checklists.id", ondelete="CASCADE"), nullable=False)
     test_item_id = Column(Integer, ForeignKey("test_items.id"), nullable=False)
     module_id = Column(Integer, ForeignKey("risk_modules.id"), nullable=False)
     is_required = Column(Boolean, default=False)
@@ -224,7 +224,7 @@ class ChecklistReview(Base):
     __tablename__ = "checklist_reviews"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    checklist_id = Column(Integer, ForeignKey("checklists.id"), nullable=False)
+    checklist_id = Column(Integer, ForeignKey("checklists.id", ondelete="CASCADE"), nullable=False)
     reviewer_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     action = Column(Enum(ChecklistStatus), nullable=False)  # APPROVED / RETURNED
     comment = Column(Text, nullable=False)
