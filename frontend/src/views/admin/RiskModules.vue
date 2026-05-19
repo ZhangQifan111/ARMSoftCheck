@@ -129,15 +129,32 @@
     <el-dialog v-model="testItemDialogVisible" :title="testItemEditing ? '编辑测试项' : '新增测试项'" width="600px">
       <el-form :model="testItemForm" :rules="testItemRules" ref="testItemFormRef" label-width="100px">
         <el-form-item label="模块" prop="module_id">
-          <el-select v-model="testItemForm.module_id" :disabled="!!testItemEditing" style="width:100%">
+          <el-select v-model="testItemForm.module_id" :disabled="!!testItemEditing" style="width:100%" placeholder="请选择模块">
             <el-option v-for="m in modules" :key="m.id" :label="m.module_name" :value="m.id" />
           </el-select>
         </el-form-item>
         <el-form-item label="测试编码" prop="test_code">
-          <el-input v-model="testItemForm.test_code" :disabled="!!testItemEditing" />
+          <el-select
+            v-model="testItemForm.test_code"
+            :disabled="!!testItemEditing"
+            filterable
+            placeholder="搜索或选择测试编码"
+            style="width:100%"
+            :loading="allTestItems.length === 0"
+          >
+            <el-option
+              v-for="t in availableTestItems"
+              :key="t.id"
+              :label="t.test_code"
+              :value="t.test_code"
+            />
+          </el-select>
+          <div v-if="!testItemEditing && allTestItems.length > 0 && availableTestItems.length === 0" style="color:#999;font-size:12px;margin-top:4px">
+            该模块下暂无未分配的测试项，可先去「测试项管理」添加
+          </div>
         </el-form-item>
         <el-form-item label="测试名称" prop="test_name">
-          <el-input v-model="testItemForm.test_name" />
+          <el-input v-model="testItemForm.test_name" placeholder="选择编码后自动填入，也可手动修改" />
         </el-form-item>
         <el-form-item label="必做">
           <el-switch v-model="testItemForm.is_required" />
@@ -174,7 +191,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from "vue"
+import { ref, reactive, computed, watch, onMounted } from "vue"
 import { ElMessage } from "element-plus"
 import { riskModuleApi, testItemApi } from "@/api"
 import type { RiskModule, TestItem } from "@/api/types"
@@ -238,7 +255,6 @@ async function loadModules() {
   try {
     const r = await riskModuleApi.list({ page_size: 200 })
     modules.value = r.items
-    // 预加载每个模块的测试项
     for (const m of modules.value) {
       loadTestItemsForModule(m.id)
     }
@@ -250,16 +266,45 @@ const testItemDialogVisible = ref(false)
 const testItemEditing = ref<TestItem | null>(null)
 const testItemSaving = ref(false)
 const testItemFormRef = ref()
+const allTestItems = ref<TestItem[]>([])   // 全局测试项字典
 const testItemForm = reactive({
   module_id: null as number | null,
   test_code: "", test_name: "", is_required: false,
-  default_level: "RECOMMENDED", default_risk_level: "MEDIUM",
+  default_level: "RECOMMENDED" as "REQUIRED" | "RECOMMENDED",
+  default_risk_level: "MEDIUM" as "HIGH" | "MEDIUM" | "LOW",
   description: "", sort_order: 0, is_active: true,
 })
 const testItemRules = {
   module_id: [{ required: true, message: "必选", trigger: "change" }],
-  test_code: [{ required: true, message: "必填", trigger: "blur" }],
+  test_code: [{ required: true, message: "必选", trigger: "change" }],
   test_name: [{ required: true, message: "必填", trigger: "blur" }],
+}
+
+// 可选测试项列表：排除当前模块已有的（新增时），编辑时包含自身
+const availableTestItems = computed(() => {
+  if (!testItemForm.module_id) return []
+  const usedIds = new Set(moduleTestItems.value[testItemForm.module_id]?.map(t => t.id) ?? [])
+  return allTestItems.value.filter(t =>
+    testItemEditing.value ? t.id === testItemEditing.value.id || !usedIds.has(t.id) : !usedIds.has(t.id)
+  )
+})
+
+// 选中测试编码 → 自动填入名称
+watch(() => testItemForm.test_code, (code) => {
+  if (!code) { testItemForm.test_name = ""; return }
+  const found = allTestItems.value.find(t => t.test_code === code)
+  if (found) {
+    testItemForm.test_name = found.test_name
+    testItemForm.is_required = found.is_required
+    testItemForm.default_level = found.default_level
+    testItemForm.default_risk_level = found.default_risk_level
+    testItemForm.description = found.description || ""
+  }
+})
+
+async function loadAllTestItems() {
+  const r = await testItemApi.list({ page_size: 500 })
+  allTestItems.value = r.items
 }
 
 function openTestItemDialog(moduleId: number, item?: TestItem) {
@@ -278,6 +323,7 @@ function openTestItemDialog(moduleId: number, item?: TestItem) {
       description: "", sort_order: 0, is_active: true,
     })
   }
+  loadAllTestItems()
   testItemDialogVisible.value = true
 }
 

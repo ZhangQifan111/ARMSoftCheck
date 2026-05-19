@@ -14,7 +14,7 @@ router = APIRouter(prefix="/test-items", tags=["测试项管理"])
 @router.get("", response_model=PageResponse)
 async def list_test_items(
     page: int = Query(1, ge=1),
-    page_size: int = Query(100, ge=1, le=200),
+    page_size: int = Query(100, ge=1, le=500),
     keyword: Optional[str] = None,
     module_id: Optional[int] = None,
     is_active: Optional[bool] = None,
