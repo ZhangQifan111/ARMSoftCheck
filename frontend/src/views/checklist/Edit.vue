@@ -410,11 +410,24 @@ async function handleSubmit() {
     } else {
       const created = await checklistApi.create(form)
       await checklistApi.selectModules(created.id, selectedModuleIds.value)
+      // selectModules 后重新加载，获取真实数据库 ID
+      const data = await checklistApi.get(created.id)
+      testResults.value = data.test_results.map((tr: any) => ({
+        id: tr.id,
+        test_item_id: tr.test_item_id,
+        test_name: tr.test_item.test_name,
+        source_modules: tr.source_modules,
+        test_level: tr.test_level,
+        is_required: tr.is_required,
+        executed: tr.executed,
+        result: tr.result,
+        remark: tr.remark || "",
+      }))
       await updateTestResults(created.id)
       await checklistApi.submit(created.id)
+      ElMessage.success("提交成功！")
+      router.push(`/checklists/${created.id}`)
     }
-    ElMessage.success("提交成功！")
-    router.push(`/checklists/${id}`)
   } catch (e: any) {
     ElMessage.error(e?.response?.data?.detail || "提交失败")
   } finally {
