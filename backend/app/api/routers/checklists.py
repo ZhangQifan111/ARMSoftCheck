@@ -206,7 +206,16 @@ async def update_checklist(
     current_user: User = Depends(get_current_user),
 ):
     result = await db.execute(
-        select(Checklist).where(Checklist.id == checklist_id)
+        select(Checklist)
+        .options(
+            selectinload(Checklist.creator),
+            selectinload(Checklist.reviewer),
+            selectinload(Checklist.project),
+            selectinload(Checklist.selected_modules).selectinload(ChecklistModule.module),
+            selectinload(Checklist.test_results).selectinload(ChecklistTestResult.test_item),
+            selectinload(Checklist.test_results).selectinload(ChecklistTestResult.module),
+        )
+        .where(Checklist.id == checklist_id)
     )
     checklist = result.scalar_one_or_none()
     if not checklist:
