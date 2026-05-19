@@ -267,6 +267,7 @@ async function loadChecklist() {
       risk_description: data.risk_description || "",
       status: data.status,
     })
+    currentChecklistId.value = data.id
     selectedModuleIds.value = data.selected_modules.map(m => m.id)
     testResults.value = data.test_results.map(tr => ({
       id: tr.id,
@@ -334,14 +335,15 @@ async function saveDraft() {
       await checklistApi.update(currentId, form)
       if (selectedModuleIds.value.length > 0) {
         await checklistApi.selectModules(currentId, selectedModuleIds.value)
+        // 重新加载以获取最新 ID，但保留用户的修改
         const data = await checklistApi.get(currentId)
-        const loaded = data.test_results.map((tr: any) => ({
-          id: tr.id, test_item_id: tr.test_item_id, test_name: tr.test_item.test_name,
-          source_modules: tr.source_modules, test_level: tr.test_level,
-          is_required: tr.is_required, executed: tr.executed, result: tr.result, remark: tr.remark || "",
+        const newIdMap = new Map(data.test_results.map((tr: any) => [tr.test_item_id, tr.id]))
+        // 用新 ID 更新 testResults，同时保留用户填写的 executed/result/remark
+        testResults.value = testResults.value.map(tr => ({
+          ...tr,
+          id: newIdMap.get(tr.test_item_id) ?? tr.id,
         }))
-        testResults.value = loaded
-        await updateTestResultsWithResults(currentId, loaded)
+        await updateTestResultsWithResults(currentId, testResults.value)
       }
     } else {
       const created = await checklistApi.create(form)
