@@ -116,7 +116,10 @@ async def validate_checklist_submit(
     """校验自检单是否可以提交"""
     result = await db.execute(
         select(Checklist)
-        .options(selectinload(Checklist.test_results))
+        .options(
+            selectinload(Checklist.selected_modules),
+            selectinload(Checklist.test_results).selectinload(ChecklistTestResult.test_item),
+        )
         .where(Checklist.id == checklist_id)
     )
     checklist = result.scalar_one_or_none()

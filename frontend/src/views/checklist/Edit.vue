@@ -429,21 +429,14 @@ async function handleSubmit() {
     } else {
       const created = await checklistApi.create(form)
       await checklistApi.selectModules(created.id, selectedModuleIds.value)
-      // selectModules 后重新加载，获取真实数据库 ID
+      // 重新加载以获取最新 ID，但保留用户的修改
       const data = await checklistApi.get(created.id)
-      const loadedResults = data.test_results.map((tr: any) => ({
-        id: tr.id,
-        test_item_id: tr.test_item_id,
-        test_name: tr.test_item.test_name,
-        source_modules: tr.source_modules,
-        test_level: tr.test_level,
-        is_required: tr.is_required,
-        executed: tr.executed,
-        result: tr.result,
-        remark: tr.remark || "",
+      const newIdMap = new Map(data.test_results.map((tr: any) => [tr.test_item_id, tr.id]))
+      testResults.value = testResults.value.map(tr => ({
+        ...tr,
+        id: newIdMap.get(tr.test_item_id) ?? tr.id,
       }))
-      testResults.value = loadedResults
-      await updateTestResultsWithResults(created.id, loadedResults)
+      await updateTestResultsWithResults(created.id, testResults.value)
       await checklistApi.submit(created.id)
       ElMessage.success("提交成功！")
       router.push(`/checklists/${created.id}`)
