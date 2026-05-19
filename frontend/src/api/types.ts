@@ -33,7 +33,6 @@ export interface TestItem {
   test_code: string
   test_name: string
   module_id: number
-  default_level: "REQUIRED" | "RECOMMENDED"
   default_risk_level: "HIGH" | "MEDIUM" | "LOW"
   is_required: boolean
   description: string | null

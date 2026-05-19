@@ -107,7 +107,6 @@ class TestItemCreate(BaseModel):
     test_code: str = Field(..., max_length=50)
     test_name: str = Field(..., max_length=200)
     module_id: int
-    default_level: TestLevel = TestLevel.RECOMMENDED
     default_risk_level: RiskLevel = RiskLevel.MEDIUM
     is_required: bool = False
     description: Optional[str] = None
@@ -118,7 +117,6 @@ class TestItemCreate(BaseModel):
 class TestItemUpdate(BaseModel):
     test_name: Optional[str] = None
     module_id: Optional[int] = None
-    default_level: Optional[TestLevel] = None
     default_risk_level: Optional[RiskLevel] = None
     is_required: Optional[bool] = None
     description: Optional[str] = None
@@ -131,7 +129,6 @@ class TestItemOut(BaseModel):
     test_code: str
     test_name: str
     module_id: int
-    default_level: TestLevel
     default_risk_level: RiskLevel
     is_required: bool
     description: Optional[str]

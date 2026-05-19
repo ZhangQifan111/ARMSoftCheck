@@ -110,7 +110,6 @@ class TestItem(Base):
     test_code = Column(String(50), unique=True, nullable=False, index=True)
     test_name = Column(String(200), nullable=False)
     module_id = Column(Integer, ForeignKey("risk_modules.id"), nullable=False, index=True)
-    default_level = Column(Enum(TestLevel), default=TestLevel.RECOMMENDED, nullable=False)
     default_risk_level = Column(Enum(RiskLevel), default=RiskLevel.MEDIUM, nullable=False)
     is_required = Column(Boolean, default=False, nullable=False)
     description = Column(Text, nullable=True)

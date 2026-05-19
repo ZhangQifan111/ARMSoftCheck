@@ -10,10 +10,15 @@
       <el-table-column prop="id" label="ID" width="60" />
       <el-table-column prop="test_code" label="代码" width="180" />
       <el-table-column prop="test_name" label="名称" min-width="200" />
-      <el-table-column prop="default_level" label="级别" width="100">
+      <el-table-column prop="module_id" label="所属模块" width="140">
         <template #default="{ row }">
-          <el-tag size="small" :class="`level-${row.default_level}`">
-            {{ row.default_level === 'REQUIRED' ? '必做' : '建议' }}
+          {{ getModuleName(row.module_id) }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="is_required" label="必做" width="80">
+        <template #default="{ row }">
+          <el-tag :type="row.is_required ? 'danger' : 'info'" size="small">
+            {{ row.is_required ? '必做' : '建议' }}
           </el-tag>
         </template>
       </el-table-column>
@@ -42,17 +47,16 @@
 
     <el-dialog v-model="showDialog" :title="editing ? '编辑测试项' : '新建测试项'" width="600px">
       <el-form :model="form" :rules="rules" ref="formRef" label-width="110px">
+        <el-form-item label="所属模块" prop="module_id">
+          <el-select v-model="form.module_id" :disabled="!!editing" style="width:100%" placeholder="请选择模块">
+            <el-option v-for="m in modules" :key="m.id" :label="m.module_name" :value="m.id" />
+          </el-select>
+        </el-form-item>
         <el-form-item label="测试项代码" prop="test_code">
           <el-input v-model="form.test_code" :disabled="!!editing" />
         </el-form-item>
         <el-form-item label="测试项名称" prop="test_name">
           <el-input v-model="form.test_name" />
-        </el-form-item>
-        <el-form-item label="默认级别" prop="default_level">
-          <el-select v-model="form.default_level" style="width:100%">
-            <el-option label="必做" value="REQUIRED" />
-            <el-option label="建议" value="RECOMMENDED" />
-          </el-select>
         </el-form-item>
         <el-form-item label="风险等级" prop="default_risk_level">
           <el-select v-model="form.default_risk_level" style="width:100%">
@@ -82,28 +86,34 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from "vue"
 import { ElMessage } from "element-plus"
-import { testItemApi } from "@/api"
-import type { TestItem } from "@/api/types"
+import { testItemApi, riskModuleApi } from "@/api"
+import type { TestItem, RiskModule } from "@/api/types"
 
 const loading = ref(false)
 const list = ref<TestItem[]>([])
 const total = ref(0)
 const page = ref(1)
+const modules = ref<RiskModule[]>([])
 const showDialog = ref(false)
 const editing = ref<TestItem | null>(null)
 const saving = ref(false)
 const formRef = ref()
 
-function formDefault() { return { test_code: "", test_name: "", default_level: "RECOMMENDED", default_risk_level: "MEDIUM", description: "", sort_order: 0, is_active: true } }
+function formDefault() { return { module_id: null as number | null, test_code: "", test_name: "", default_risk_level: "MEDIUM", is_required: false, description: "", sort_order: 0, is_active: true } }
 const form = reactive(formDefault())
-const rules = { test_code: [{ required: true, message: "必填", trigger: "blur" }], test_name: [{ required: true, message: "必填", trigger: "blur" }] }
+const rules = {
+  module_id: [{ required: true, message: "必选模块", trigger: "change" }],
+  test_code: [{ required: true, message: "必填", trigger: "blur" }],
+  test_name: [{ required: true, message: "必填", trigger: "blur" }],
+}
 
-onMounted(load)
+onMounted(() => { load(); loadModules() })
 async function load() { loading.value = true; try { const r = await testItemApi.list({ page: page.value, page_size: 20 }); list.value = r.items; total.value = r.total } finally { loading.value = false } }
+async function loadModules() { const r = await riskModuleApi.list({ page_size: 200 }); modules.value = r.items }
 
 function handleEdit(row: TestItem) {
   editing.value = row
-  Object.assign(form, { test_code: row.test_code, test_name: row.test_name, default_level: row.default_level, default_risk_level: row.default_risk_level, description: row.description || "", sort_order: row.sort_order, is_active: row.is_active })
+  Object.assign(form, { module_id: row.module_id, test_code: row.test_code, test_name: row.test_name, default_risk_level: row.default_risk_level, is_required: row.is_required, description: row.description || "", sort_order: row.sort_order, is_active: row.is_active })
   showDialog.value = true
 }
 
@@ -121,4 +131,8 @@ async function handleSave() {
 }
 
 async function handleDelete(id: number) { await testItemApi.delete(id); ElMessage.success("删除成功"); load() }
+
+function getModuleName(id: number) {
+  return modules.value.find(m => m.id === id)?.module_name || String(id)
+}
 </script>

@@ -158,12 +158,6 @@
         <el-form-item label="必做">
           <el-switch v-model="testItemForm.is_required" />
         </el-form-item>
-        <el-form-item label="测试级别">
-          <el-select v-model="testItemForm.default_level" style="width:100%">
-            <el-option label="必填" value="REQUIRED" />
-            <el-option label="建议" value="RECOMMENDED" />
-          </el-select>
-        </el-form-item>
         <el-form-item label="风险等级">
           <el-select v-model="testItemForm.default_risk_level" style="width:100%">
             <el-option label="高" value="HIGH" />
@@ -269,7 +263,6 @@ const allTestItems = ref<TestItem[]>([])   // 全局测试项字典
 const testItemForm = reactive({
   module_id: null as number | null,
   test_code: "", test_name: "", is_required: false,
-  default_level: "RECOMMENDED" as "REQUIRED" | "RECOMMENDED",
   default_risk_level: "MEDIUM" as "HIGH" | "MEDIUM" | "LOW",
   description: "", sort_order: 0, is_active: true,
 })
@@ -295,7 +288,6 @@ watch(() => testItemForm.test_name, (name) => {
   if (found) {
     testItemForm.test_code = found.test_code
     testItemForm.is_required = found.is_required
-    testItemForm.default_level = found.default_level
     testItemForm.default_risk_level = found.default_risk_level
     testItemForm.description = found.description || ""
   }
@@ -311,14 +303,14 @@ function openTestItemDialog(moduleId: number, item?: TestItem) {
   if (item) {
     Object.assign(testItemForm, {
       module_id: item.module_id, test_code: item.test_code, test_name: item.test_name,
-      is_required: item.is_required, default_level: item.default_level,
+      is_required: item.is_required,
       default_risk_level: item.default_risk_level, description: item.description || "",
       sort_order: item.sort_order, is_active: item.is_active,
     })
   } else {
     Object.assign(testItemForm, {
       module_id: moduleId, test_code: "", test_name: "", is_required: false,
-      default_level: "RECOMMENDED", default_risk_level: "MEDIUM",
+      default_risk_level: "MEDIUM",
       description: "", sort_order: 0, is_active: true,
     })
   }
