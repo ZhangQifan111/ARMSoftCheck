@@ -29,7 +29,7 @@ async def list_test_items(
         query = query.where(TestItem.module_id == module_id)
 
     total = (await db.execute(select(func.count()).select_from(query.subquery()))).scalar()
-    query = query.order_by(TestItem.sort_order, TestItem.id).offset((page - 1) * page_size).limit(page_size)
+    query = query.order_by(TestItem.id).offset((page - 1) * page_size).limit(page_size)
     result = await db.execute(query)
     items = [TestItemOut.model_validate(t) for t in result.scalars().all()]
     return PageResponse(total=total, page=page, page_size=page_size, items=items)

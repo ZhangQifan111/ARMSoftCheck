@@ -76,7 +76,6 @@ class RiskModuleCreate(BaseModel):
     module_name: str = Field(..., max_length=100)
     risk_level: RiskLevel = RiskLevel.MEDIUM
     description: Optional[str] = None
-    sort_order: int = 0
     is_active: bool = True
 
 
@@ -84,7 +83,6 @@ class RiskModuleUpdate(BaseModel):
     module_name: Optional[str] = None
     risk_level: Optional[RiskLevel] = None
     description: Optional[str] = None
-    sort_order: Optional[int] = None
     is_active: Optional[bool] = None
 
 
@@ -94,7 +92,6 @@ class RiskModuleOut(BaseModel):
     module_name: str
     risk_level: RiskLevel
     description: Optional[str]
-    sort_order: int
     is_active: bool
     created_at: datetime
 
@@ -110,7 +107,6 @@ class TestItemCreate(BaseModel):
     default_risk_level: RiskLevel = RiskLevel.MEDIUM
     is_required: bool = False
     description: Optional[str] = None
-    sort_order: int = 0
 
 
 class TestItemUpdate(BaseModel):
@@ -119,7 +115,6 @@ class TestItemUpdate(BaseModel):
     default_risk_level: Optional[RiskLevel] = None
     is_required: Optional[bool] = None
     description: Optional[str] = None
-    sort_order: Optional[int] = None
 
 
 class TestItemOut(BaseModel):
@@ -130,7 +125,6 @@ class TestItemOut(BaseModel):
     default_risk_level: RiskLevel
     is_required: bool
     description: Optional[str]
-    sort_order: int
     created_at: datetime
 
     class Config:
@@ -143,14 +137,12 @@ class ModuleTestMapCreate(BaseModel):
     module_code: str
     test_code: str
     is_required: bool = False
-    sort_order: int = 0
     remark: Optional[str] = None
     is_active: bool = True
 
 
 class ModuleTestMapUpdate(BaseModel):
     is_required: Optional[bool] = None
-    sort_order: Optional[int] = None
     remark: Optional[str] = None
     is_active: Optional[bool] = None
 
@@ -160,7 +152,6 @@ class ModuleTestMapOut(BaseModel):
     module_code: str
     test_code: str
     is_required: bool
-    sort_order: int
     remark: Optional[str]
     is_active: bool
     created_at: datetime

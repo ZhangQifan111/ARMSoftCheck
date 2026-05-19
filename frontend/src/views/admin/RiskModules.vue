@@ -72,7 +72,6 @@
           </template>
         </el-table-column>
         <el-table-column prop="description" label="描述" show-overflow-tooltip />
-        <el-table-column prop="sort_order" label="排序" width="70" />
         <el-table-column prop="is_active" label="状态" width="80">
           <template #default="{ row }">
             <el-tag :type="row.is_active ? 'success' : 'info'" size="small">
@@ -111,9 +110,6 @@
         </el-form-item>
         <el-form-item label="描述">
           <el-input v-model="moduleForm.description" type="textarea" :rows="2" />
-        </el-form-item>
-        <el-form-item label="排序号">
-          <el-input-number v-model="moduleForm.sort_order" :min="0" />
         </el-form-item>
         <el-form-item label="启用">
           <el-switch v-model="moduleForm.is_active" />
@@ -168,9 +164,6 @@
         <el-form-item label="描述">
           <el-input v-model="testItemForm.description" type="textarea" :rows="2" />
         </el-form-item>
-        <el-form-item label="排序号">
-          <el-input-number v-model="testItemForm.sort_order" :min="0" />
-        </el-form-item>
       </el-form>
       <template #footer>
         <el-button @click="testItemDialogVisible=false">取消</el-button>
@@ -197,7 +190,6 @@ const moduleSaving = ref(false)
 const moduleFormRef = ref()
 const moduleForm = reactive({
   module_code: "", module_name: "", risk_level: "MEDIUM",
-  description: "", sort_order: 0, is_active: true,
 })
 const moduleRules = {
   module_code: [{ required: true, message: "必填", trigger: "blur" }],
@@ -210,10 +202,8 @@ function openModuleDialog(row?: RiskModule) {
     Object.assign(moduleForm, {
       module_code: row.module_code, module_name: row.module_name,
       risk_level: row.risk_level, description: row.description || "",
-      sort_order: row.sort_order, is_active: row.is_active,
     })
   } else {
-    Object.assign(moduleForm, { module_code: "", module_name: "", risk_level: "MEDIUM", description: "", sort_order: 0, is_active: true })
   }
   moduleDialogVisible.value = true
 }
@@ -261,7 +251,6 @@ const testItemForm = reactive({
   module_id: null as number | null,
   test_code: "", test_name: "", is_required: false,
   default_risk_level: "MEDIUM" as "HIGH" | "MEDIUM" | "LOW",
-  description: "", sort_order: 0,
 })
 const testItemRules = {
   module_id: [{ required: true, message: "必选", trigger: "change" }],
@@ -302,13 +291,11 @@ function openTestItemDialog(moduleId: number, item?: TestItem) {
       module_id: item.module_id, test_code: item.test_code, test_name: item.test_name,
       is_required: item.is_required,
       default_risk_level: item.default_risk_level, description: item.description || "",
-      sort_order: item.sort_order,
     })
   } else {
     Object.assign(testItemForm, {
       module_id: moduleId, test_code: "", test_name: "", is_required: false,
       default_risk_level: "MEDIUM",
-      description: "", sort_order: 0,
     })
   }
   loadAllTestItems()

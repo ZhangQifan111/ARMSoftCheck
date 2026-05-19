@@ -96,7 +96,7 @@ class RiskModule(Base):
     module_name = Column(String(100), nullable=False)
     risk_level = Column(Enum(RiskLevel), default=RiskLevel.MEDIUM, nullable=False)
     description = Column(Text, nullable=True)
-    sort_order = Column(Integer, default=0)
+
     is_active = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
@@ -113,7 +113,7 @@ class TestItem(Base):
     default_risk_level = Column(Enum(RiskLevel), default=RiskLevel.MEDIUM, nullable=False)
     is_required = Column(Boolean, default=False, nullable=False)
     description = Column(Text, nullable=True)
-    sort_order = Column(Integer, default=0)
+
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
@@ -128,7 +128,7 @@ class ModuleTestMap(Base):
     module_code = Column(String(50), ForeignKey("risk_modules.module_code"), nullable=False, index=True)
     test_code = Column(String(50), ForeignKey("test_items.test_code"), nullable=False, index=True)
     is_required = Column(Boolean, default=False, nullable=False)
-    sort_order = Column(Integer, default=0)
+
     remark = Column(String(255), nullable=True)
     is_active = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime, server_default=func.now())

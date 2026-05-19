@@ -23,7 +23,6 @@ export interface RiskModule {
   module_name: string
   risk_level: "HIGH" | "MEDIUM" | "LOW"
   description: string | null
-  sort_order: number
   is_active: boolean
   created_at: string
 }
@@ -36,7 +35,6 @@ export interface TestItem {
   default_risk_level: "HIGH" | "MEDIUM" | "LOW"
   is_required: boolean
   description: string | null
-  sort_order: number
   created_at: string
 }
 
@@ -45,7 +43,6 @@ export interface ModuleTestMap {
   module_code: string
   test_code: string
   is_required: boolean
-  sort_order: number
   remark: string | null
   is_active: boolean
   created_at: string

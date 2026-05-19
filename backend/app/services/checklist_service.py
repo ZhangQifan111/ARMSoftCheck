@@ -58,7 +58,7 @@ async def get_test_items_for_modules(
             TestItem.module_id.in_(module_ids),
             TestItem.module.has(RiskModule.is_active == True),
         )
-        .order_by(TestItem.sort_order, TestItem.id)
+        .order_by(TestItem.id)
     )
     items = result.scalars().all()
 

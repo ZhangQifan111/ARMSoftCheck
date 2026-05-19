@@ -89,7 +89,6 @@ def import_risk_modules(session):
     for row in rows:
         existing = session.query(RiskModule).filter_by(module_code=row["module_code"]).first()
         if existing:
-            for k in ["module_name", "risk_level", "description", "sort_order", "is_active"]:
                 if k in row:
                     setattr(existing, k, bool(int(row[k])) if k == "is_active" else (
                         RiskLevel(row[k]) if k == "risk_level" else row[k]
@@ -100,7 +99,6 @@ def import_risk_modules(session):
             module_name=row["module_name"],
             risk_level=RiskLevel(row["risk_level"]),
             description=row.get("description", ""),
-            sort_order=int(row.get("sort_order", 0)),
             is_active=bool(int(row.get("is_active", 1))),
         )
         session.add(module)
@@ -135,7 +133,6 @@ def import_test_items(session):
             default_risk_level=RiskLevel(row.get("default_risk_level", "MEDIUM")),
             is_required=bool(int(row.get("is_required", 0))),
             description=row.get("description", ""),
-            sort_order=int(row.get("sort_order", 0)),
         )
         session.add(item)
         logger.info(f"导入测试项: {item.test_code} -> {module_code}")
@@ -152,7 +149,6 @@ def import_module_test_maps(session):
             test_code=row["test_code"],
         ).first()
         if existing:
-            for k in ["is_required", "sort_order", "remark", "is_active"]:
                 if k in row:
                     val = row[k]
                     if k == "is_active" or k == "is_required":
@@ -163,7 +159,6 @@ def import_module_test_maps(session):
             module_code=row["module_code"],
             test_code=row["test_code"],
             is_required=bool(int(row.get("is_required", 0))),
-            sort_order=int(row.get("sort_order", 0)),
             remark=row.get("remark", ""),
             is_active=bool(int(row.get("is_active", 1))),
         )
