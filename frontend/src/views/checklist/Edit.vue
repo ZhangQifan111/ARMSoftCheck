@@ -349,14 +349,21 @@ async function saveDraft() {
 }
 
 async function updateTestResults(checklistId?: number) {
-  const id = checklistId || Number(route.params.id)
-  const results = testResults.value.map(tr => ({
-    test_result_id: tr.id,
-    executed: tr.executed || undefined,
-    result: tr.result || undefined,
-    remark: tr.remark || undefined,
-  }))
-  await checklistApi.updateResults(id, results)
+  await updateTestResultsWithResults(checklistId, testResults.value)
+}
+
+async function updateTestResultsWithResults(checklistId: number, results: any[]) {
+  const validResults = results
+    .filter(tr => tr.id != null)
+    .map(tr => ({
+      test_result_id: tr.id,
+      executed: tr.executed || undefined,
+      result: tr.result || undefined,
+      remark: tr.remark || undefined,
+    }))
+  if (validResults.length > 0) {
+    await checklistApi.updateResults(checklistId, validResults)
+  }
 }
 
 async function handleSubmit() {
@@ -412,7 +419,7 @@ async function handleSubmit() {
       await checklistApi.selectModules(created.id, selectedModuleIds.value)
       // selectModules 后重新加载，获取真实数据库 ID
       const data = await checklistApi.get(created.id)
-      testResults.value = data.test_results.map((tr: any) => ({
+      const loadedResults = data.test_results.map((tr: any) => ({
         id: tr.id,
         test_item_id: tr.test_item_id,
         test_name: tr.test_item.test_name,
@@ -423,7 +430,8 @@ async function handleSubmit() {
         result: tr.result,
         remark: tr.remark || "",
       }))
-      await updateTestResults(created.id)
+      testResults.value = loadedResults
+      await updateTestResultsWithResults(created.id, loadedResults)
       await checklistApi.submit(created.id)
       ElMessage.success("提交成功！")
       router.push(`/checklists/${created.id}`)
