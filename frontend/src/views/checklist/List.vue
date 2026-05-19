@@ -90,6 +90,15 @@
             >
               编辑
             </el-button>
+            <el-popconfirm
+              v-if="row.status === 'DRAFT' || row.status === 'RETURNED'"
+              title="确认删除该自检单？"
+              @confirm="handleDelete(row.id)"
+            >
+              <template #reference>
+                <el-button type="danger" link size="small">删除</el-button>
+              </template>
+            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
