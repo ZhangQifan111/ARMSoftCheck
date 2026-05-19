@@ -297,7 +297,7 @@ async def generate_test_items_api(
             module_name=src["module_name"],
             module_code=src["module_code"],
             is_required=item["is_required"],
-            test_level=item["default_level"],
+            test_level=TestLevel.REQUIRED if item["is_required"] else TestLevel.RECOMMENDED,
             description=item.get("description"),
         ))
 
