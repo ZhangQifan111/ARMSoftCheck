@@ -92,7 +92,7 @@
                 编辑
               </el-button>
               <el-popconfirm
-                v-if="row.status === 'DRAFT' || row.status === 'RETURNED'"
+                v-if="auth.isAdmin || row.status === 'DRAFT' || row.status === 'RETURNED'"
                 title="确认删除该自检单？"
                 @confirm="handleDelete(row.id)"
               >
